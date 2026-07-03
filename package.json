@@ -1,0 +1,15 @@
+{
+  "name": "glitch-bot",
+  "version": "1.0.0",
+  "description": "The Discord bot that handles our Discord Server.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "GlitchHorizonHQ, TotallyLumi",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^14.26.4",
+    "express": "^5.2.1"
+  }
+}
