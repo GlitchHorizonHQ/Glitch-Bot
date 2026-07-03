@@ -5,7 +5,6 @@ import {
   GatewayIntentBits,
   Partials,
   ColorResolvable,
-  BanOptions,
 } from "discord.js";
 import express from "express";
 
@@ -76,5 +75,20 @@ app.get("/api/health", (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log("[WEBSERVER] Bot HTTP Server running on ", port);
+  logger.info(`Bot HTTP Server running on ${port}`);
 });
+
+let handlers = fs.readdirSync("./handlers");
+const filteredHandlers = handlers.filter(
+  (f) => (f.endsWith(".js") || f.endsWith(".ts")) && !f.startsWith("-"),
+);
+
+for (const file of filteredHandlers) {
+  const fileWithoutExtension = file.replace(/\.[jt]s$/, "");
+  const handlerModule = await import(`./handlers/${fileWithoutExtension}.js`);
+  const handler: Handler = handlerModule.default || handlerModule;
+
+  if (handler) await handler.execute(client);
+}
+
+client.login(config.token);
