@@ -2,6 +2,7 @@ const { Client, GatewayIntentBits, Collection } = require("discord.js");
 const express = require("express");
 
 const config = require("./config");
+const { loadCommands, loadEvents } = require("./handlers/botHandler");
 
 const client = new Client({
   intents: [
@@ -36,3 +37,19 @@ app.get("/api/health", (req, res) => {
 app.listen(port, () => {
   console.log("[WEBSERVER] Bot HTTP Server running on ", port);
 });
+
+(async () => {
+  try {
+    await loadCommands(client);
+    await loadEvents(client);
+
+    console.log("Handlers loaded successfully");
+
+    await client.login(config.DISCORD_TOKEN);
+  } catch (error) {
+    console.error("Error starting bot: ", error);
+    process.exit(1);
+  }
+})();
+
+module.exports = client;
