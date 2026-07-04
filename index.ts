@@ -7,6 +7,7 @@ import {
   ColorResolvable,
 } from "discord.js";
 import express from "express";
+import "dotenv/config";
 
 import config from "./config.json" with { type: "json" };
 import type {
@@ -42,7 +43,6 @@ const client = new Client({
 client.settings = {
   prefix: config.prefix,
   color: config.color as ColorResolvable,
-  token: config.token,
   http_port: config.http_port,
 };
 client.logger = logger;
@@ -91,4 +91,4 @@ for (const file of filteredHandlers) {
   if (handler) await handler.execute(client);
 }
 
-client.login(config.token);
+client.login(process.env.token);

@@ -1,14 +1,12 @@
+import "dotenv/config";
 import fs from "fs";
 import { PermissionsBitField, REST, Routes } from "discord.js";
 import type { BotClient, SlashCommand, App, Handler } from "../types";
-import client from "../index.js";
 
+const { TOKEN, CLIENT_ID } = process.env;
 const args = process.argv.slice(2);
 
-const api = new REST({ version: "10" }).setToken(client.settings.token);
-
-const CLIENT_ID = "1522705277458055399";
-const TEST_GUILD = "1522707753267892275";
+const api = new REST({ version: "10" }).setToken(TOKEN!);
 
 async function getSlashCommands(client: BotClient | null) {
   const folder = fs.readdirSync("./commands/slash");
@@ -27,16 +25,14 @@ async function getSlashCommands(client: BotClient | null) {
         `../commands/slash/${dir}/${fileWithoutExtension}.js`
       );
       const command: SlashCommand = commandModule.default || commandModule;
-
       if (command) {
         if (client) client.slashCommands.set(command.name, command);
-
         slash_commands.push({
           name: command.name,
           description: command.description,
           type: command.type,
           options: command.options || null,
-          default_permissions: command.default_permission || null,
+          default_permission: command.default_permission || null,
           default_member_permission: command.default_member_permissions
             ? PermissionsBitField.resolve(
                 command.default_member_permissions,
@@ -62,11 +58,12 @@ async function registerCommands(
 
   try {
     if (dev) {
-      await api.put(Routes.applicationGuildCommands(CLIENT_ID, TEST_GUILD), {
-        body,
-      });
+      await api.put(
+        Routes.applicationGuildCommands(CLIENT_ID!, process.env.TEST_GUILD!),
+        { body },
+      );
     } else {
-      await api.put(Routes.applicationCommands(CLIENT_ID), { body });
+      await api.put(Routes.applicationCommands(CLIENT_ID!), { body });
     }
 
     client?.logger.success("Successfully Registered Slash Commands");
@@ -81,14 +78,14 @@ if (args[0] == "sync") {
   })();
 } else {
   async () => {
-    await registerCommands(null, TEST_GUILD !== null);
+    await registerCommands(null, process.env.TEST_GUILD !== null);
   };
 }
 
 const handler: Handler = {
   name: "slashCommands",
   execute: async (client: BotClient) => {
-    await registerCommands(client, TEST_GUILD !== null);
+    await registerCommands(client, process.env.TEST_GUILD !== null);
   },
 };
 

@@ -19,7 +19,6 @@ export interface BotClient extends Client {
     prefix: string;
     color: ColorResolvable;
     http_port: number;
-    token: string;
   };
   logger: CustomLogger<ILogObj>;
   commands: Collection<string, MessageCommand>;
@@ -97,7 +96,6 @@ export interface Config {
   prefix: string;
   color: string;
   http_port: number;
-  token: string;
 }
 
 declare global {
