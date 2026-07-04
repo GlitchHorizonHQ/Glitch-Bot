@@ -1,7 +1,7 @@
 import fs from "fs";
 import { PermissionsBitField, REST, Routes } from "discord.js";
 import type { BotClient, SlashCommand, App, Handler } from "../types";
-import client from "../index";
+import client from "../index.js";
 
 const args = process.argv.slice(2);
 
